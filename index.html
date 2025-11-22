@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#4A90E2">
+    <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Ma PWA Test">
-    <title>Ma PWA Test iPhone</title>
+    <meta name="apple-mobile-web-app-title" content="Life Tracker">
+    <title>Life Tracker - Votre Vie Gamifiée</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" type="image/png" href="./icons/icon-192.png">
-    <!-- Icônes Apple Touch pour toutes les tailles iOS -->
     <link rel="apple-touch-icon" href="./icons/icon-180.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
     <link rel="apple-touch-icon" sizes="167x167" href="./icons/icon-167.png">
@@ -19,84 +18,180 @@
     <link rel="apple-touch-icon" sizes="120x120" href="./icons/icon-120.png">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1 class="app-title">🎯 Life Tracker</h1>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Changer le thème">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Container principal -->
     <div class="container">
-        <header>
-            <h1>🚀 Ma PWA de Test</h1>
-            <p class="subtitle">Application Progressive Web</p>
-        </header>
-
-        <main>
-            <section class="card">
-                <h2>✅ Statut de l'application</h2>
-                <div id="status" class="status-info">
-                    <p>📱 <strong>Mode:</strong> <span id="display-mode">Navigateur</span></p>
-                    <p>🌐 <strong>Connexion:</strong> <span id="connection-status">En ligne</span></p>
-                    <p>💾 <strong>Service Worker:</strong> <span id="sw-status">Chargement...</span></p>
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>🎮 Fonctionnalités de test</h2>
-                
-                <div class="test-group">
-                    <h3>Compteur</h3>
-                    <div class="counter-container">
-                        <button id="decrease" class="btn btn-secondary">-</button>
-                        <span id="counter" class="counter-display">0</span>
-                        <button id="increase" class="btn btn-primary">+</button>
-                    </div>
-                    <button id="reset" class="btn btn-outline">Réinitialiser</button>
-                </div>
-
-                <div class="test-group">
-                    <h3>Notes</h3>
-                    <textarea id="notes" placeholder="Écrivez vos notes ici... Elles seront sauvegardées localement."></textarea>
-                    <p class="info-text">💡 Vos notes sont sauvegardées automatiquement</p>
-                </div>
-
-                <div class="test-group">
-                    <h3>Vibration (si disponible)</h3>
-                    <button id="vibrate" class="btn btn-primary">Faire vibrer</button>
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>📊 Informations système</h2>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <strong>Navigateur:</strong>
-                        <span id="browser-info">Détection...</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>Résolution:</strong>
-                        <span id="screen-size">Calcul...</span>
-                    </div>
-                    <div class="info-item">
-                        <strong>Heure:</strong>
-                        <span id="current-time">--:--</span>
+        
+        <!-- Tableau de bord principal -->
+        <section id="dashboard-view" class="view active">
+            <!-- Score global -->
+            <div class="global-score-card">
+                <h2>Score Global</h2>
+                <div class="global-score">
+                    <canvas id="global-chart" width="150" height="150"></canvas>
+                    <div class="global-score-text">
+                        <span id="global-score-value">0</span>
+                        <span class="score-label">/ 100</span>
                     </div>
                 </div>
-            </section>
+                <p class="global-message" id="global-message">Commencez à suivre votre progression !</p>
+            </div>
 
-            <section class="card success">
-                <h2>✨ Installation réussie !</h2>
-                <p>Si vous voyez cette page depuis votre écran d'accueil, félicitations ! Votre PWA fonctionne correctement.</p>
-                <p><strong>Pour installer:</strong></p>
-                <ol>
-                    <li>Ouvrez cette page dans Safari</li>
-                    <li>Appuyez sur <strong>Partager</strong> (icône carré avec flèche)</li>
-                    <li>Sélectionnez <strong>"Sur l'écran d'accueil"</strong></li>
-                    <li>Appuyez sur <strong>Ajouter</strong></li>
-                </ol>
-            </section>
-        </main>
+            <!-- Statistiques rapides -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="streak-value">0</span>
+                        <span class="stat-label">Jours de suite</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="activities-today">0</span>
+                        <span class="stat-label">Aujourd'hui</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="total-activities">0</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                </div>
+            </div>
 
-        <footer>
-            <p>Version 1.0.0 - PWA Test</p>
-            <p class="small">Créé avec ❤️ pour iPhone</p>
-        </footer>
+            <!-- Catégories -->
+            <div class="categories-section">
+                <h2>Vos Statistiques</h2>
+                <div id="categories-list" class="categories-list"></div>
+            </div>
+
+            <!-- Bouton d'ajout rapide -->
+            <button class="fab" id="add-activity-btn" aria-label="Ajouter une activité">
+                <span class="fab-icon">+</span>
+            </button>
+        </section>
+
+        <!-- Vue Statistiques détaillées -->
+        <section id="stats-view" class="view">
+            <button class="back-btn" id="back-to-dashboard">← Retour</button>
+            
+            <div class="stats-header">
+                <h2 id="stats-category-name">Statistique</h2>
+                <div class="period-selector">
+                    <button class="period-btn active" data-period="week">Semaine</button>
+                    <button class="period-btn" data-period="month">Mois</button>
+                    <button class="period-btn" data-period="year">Année</button>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="detail-chart"></canvas>
+            </div>
+
+            <div class="stats-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Moyenne</span>
+                    <span class="summary-value" id="avg-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Maximum</span>
+                    <span class="summary-value" id="max-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Progression</span>
+                    <span class="summary-value" id="progress-value">0%</span>
+                </div>
+            </div>
+
+            <div class="recent-entries">
+                <h3>Entrées récentes</h3>
+                <div id="recent-entries-list"></div>
+            </div>
+        </section>
+
+        <!-- Vue Profil -->
+        <section id="profile-view" class="view">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span id="profile-avatar-text">U</span>
+                </div>
+                <h2 id="profile-name">Utilisateur</h2>
+                <p class="profile-subtitle">Membre depuis <span id="member-since"></span></p>
+            </div>
+
+            <div class="profile-stats">
+                <h3>Vos performances</h3>
+                <div class="profile-stat-grid" id="profile-stats-grid"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Paramètres</h3>
+                <div class="setting-item">
+                    <label for="user-name-input">Nom d'utilisateur</label>
+                    <input type="text" id="user-name-input" placeholder="Votre nom">
+                </div>
+                <button class="btn btn-primary" id="save-profile">Sauvegarder</button>
+                <button class="btn btn-danger" id="reset-data">Réinitialiser toutes les données</button>
+            </div>
+        </section>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Modal d'ajout d'activité -->
+    <div id="add-activity-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ajouter une entrée</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="activity-category">Catégorie</label>
+                    <select id="activity-category"></select>
+                </div>
+                <div class="form-group">
+                    <label for="activity-value">Valeur (0-10)</label>
+                    <div class="slider-container">
+                        <input type="range" id="activity-value" min="0" max="10" value="5" step="0.5">
+                        <span id="activity-value-display">5</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="activity-note">Note (optionnel)</label>
+                    <textarea id="activity-note" placeholder="Comment vous sentez-vous ?"></textarea>
+                </div>
+                <button class="btn btn-primary btn-block" id="submit-activity">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation inférieure -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-view="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Accueil</span>
+        </button>
+        <button class="nav-item" data-view="stats">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Stats</span>
+        </button>
+        <button class="nav-item" data-view="profile">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Profil</span>
+        </button>
+    </nav>
+
+    <script src="./app.js"></script>
 </body>
 </html>
