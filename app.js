@@ -124,6 +124,20 @@ function initEventListeners() {
             renderDetailChart();
         });
     });
+    
+    // Redimensionnement de la fenêtre - redessiner le graphique
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (appState.currentView === 'stats' && appState.currentCategory) {
+                renderDetailChart();
+            }
+            if (appState.currentView === 'dashboard') {
+                updateGlobalScore();
+            }
+        }, 250);
+    });
 }
 
 // Dashboard
@@ -210,25 +224,43 @@ function updateGlobalScore() {
 
 function drawGlobalChart(score) {
     const canvas = document.getElementById('global-chart');
-    const ctx = canvas.getContext('2d');
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = 60;
+    if (!canvas) return;
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Taille responsive
+    const size = Math.min(150, window.innerWidth * 0.4);
+    
+    // Définir les dimensions CSS
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    
+    // Définir les dimensions réelles
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    
+    // Mettre à l'échelle
+    ctx.scale(dpr, dpr);
+    
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = size * 0.4;
+    
+    ctx.clearRect(0, 0, size, size);
     
     // Cercle de fond
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 12;
+    ctx.lineWidth = size * 0.08;
     ctx.stroke();
     
     // Arc de progression
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, -Math.PI / 2, (score / 100 * 2 * Math.PI) - Math.PI / 2);
     ctx.strokeStyle = 'white';
-    ctx.lineWidth = 12;
+    ctx.lineWidth = size * 0.08;
     ctx.lineCap = 'round';
     ctx.stroke();
 }
@@ -439,15 +471,34 @@ function prepareChartData(entries, period) {
 function drawChart(data) {
     const canvas = document.getElementById('detail-chart');
     const ctx = canvas.getContext('2d');
+    const container = canvas.parentElement;
     
-    canvas.width = canvas.offsetWidth * 2;
-    canvas.height = 300;
+    // Calculer la largeur disponible en tenant compte du padding du container
+    const containerWidth = container.offsetWidth;
+    const dpr = window.devicePixelRatio || 1;
+    
+    // Définir les dimensions du canvas en pixels CSS
+    canvas.style.width = '100%';
+    canvas.style.height = '300px';
+    
+    // Définir les dimensions réelles du canvas pour un rendu net
+    canvas.width = containerWidth * dpr;
+    canvas.height = 300 * dpr;
+    
+    // Mettre à l'échelle le contexte
+    ctx.scale(dpr, dpr);
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    const padding = 40;
-    const chartWidth = canvas.width - padding * 2;
-    const chartHeight = canvas.height - padding * 2;
+    // Ajuster le padding en fonction de la largeur
+    const basePadding = containerWidth < 400 ? 30 : 40;
+    const leftPadding = basePadding + 10; // Plus d'espace pour les labels Y
+    const rightPadding = basePadding - 10;
+    const topPadding = basePadding - 10;
+    const bottomPadding = basePadding + 10; // Plus d'espace pour les labels X
+    
+    const chartWidth = containerWidth - leftPadding - rightPadding;
+    const chartHeight = 300 - topPadding - bottomPadding;
     
     const maxValue = Math.max(...data.map(d => d.value), 10);
     const xStep = chartWidth / (data.length - 1 || 1);
@@ -456,13 +507,16 @@ function drawChart(data) {
     const isDark = appState.theme === 'dark';
     ctx.strokeStyle = isDark ? '#cbd5e1' : '#64748b';
     ctx.fillStyle = isDark ? '#cbd5e1' : '#64748b';
-    ctx.font = '20px -apple-system, sans-serif';
+    
+    // Taille de police adaptative
+    const fontSize = containerWidth < 400 ? 10 : 12;
+    ctx.font = `${fontSize}px -apple-system, sans-serif`;
     
     // Axes
     ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, canvas.height - padding);
-    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.moveTo(leftPadding, topPadding);
+    ctx.lineTo(leftPadding, 300 - bottomPadding);
+    ctx.lineTo(containerWidth - rightPadding, 300 - bottomPadding);
     ctx.lineWidth = 2;
     ctx.stroke();
     
@@ -470,23 +524,24 @@ function drawChart(data) {
     ctx.strokeStyle = isDark ? '#334155' : '#e2e8f0';
     ctx.lineWidth = 1;
     for (let i = 0; i <= 5; i++) {
-        const y = padding + (chartHeight / 5) * i;
+        const y = topPadding + (chartHeight / 5) * i;
         ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(canvas.width - padding, y);
+        ctx.moveTo(leftPadding, y);
+        ctx.lineTo(containerWidth - rightPadding, y);
         ctx.stroke();
         
         // Labels Y
         ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
         ctx.textAlign = 'right';
-        ctx.fillText((maxValue - (maxValue / 5) * i).toFixed(1), padding - 10, y + 5);
+        ctx.textBaseline = 'middle';
+        ctx.fillText((maxValue - (maxValue / 5) * i).toFixed(1), leftPadding - 5, y);
     }
     
     // Dessiner la courbe
     ctx.beginPath();
     data.forEach((point, i) => {
-        const x = padding + xStep * i;
-        const y = canvas.height - padding - (point.value / maxValue * chartHeight);
+        const x = leftPadding + xStep * i;
+        const y = 300 - bottomPadding - (point.value / maxValue * chartHeight);
         
         if (i === 0) {
             ctx.moveTo(x, y);
@@ -500,12 +555,13 @@ function drawChart(data) {
     ctx.stroke();
     
     // Points sur la courbe
+    const pointRadius = containerWidth < 400 ? 4 : 6;
     data.forEach((point, i) => {
-        const x = padding + xStep * i;
-        const y = canvas.height - padding - (point.value / maxValue * chartHeight);
+        const x = leftPadding + xStep * i;
+        const y = 300 - bottomPadding - (point.value / maxValue * chartHeight);
         
         ctx.beginPath();
-        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+        ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
         ctx.fillStyle = '#6366f1';
         ctx.fill();
         
@@ -513,7 +569,8 @@ function drawChart(data) {
         if (point.label) {
             ctx.fillStyle = isDark ? '#94a3b8' : '#64748b';
             ctx.textAlign = 'center';
-            ctx.fillText(point.label, x, canvas.height - padding + 25);
+            ctx.textBaseline = 'top';
+            ctx.fillText(point.label, x, 300 - bottomPadding + 8);
         }
     });
 }

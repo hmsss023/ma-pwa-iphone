@@ -54,6 +54,13 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
     padding-top: var(--navbar-height);
     padding-bottom: var(--bottom-nav-height);
+    overflow-x: hidden;
+    width: 100%;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* Navigation supérieure */
@@ -156,12 +163,18 @@ body {
     margin-bottom: 15px;
 }
 
+.global-score canvas {
+    display: block;
+    margin: 0 auto;
+}
+
 .global-score-text {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    pointer-events: none;
 }
 
 #global-score-value {
@@ -578,6 +591,15 @@ textarea {
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: var(--shadow-md);
+    overflow: hidden;
+    width: 100%;
+}
+
+.chart-container canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    touch-action: none;
 }
 
 .stats-summary {
@@ -739,5 +761,37 @@ textarea {
     
     .profile-stat-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .global-score-card {
+        padding: 20px;
+    }
+    
+    #global-score-value {
+        font-size: 2rem;
+    }
+    
+    .score-label {
+        font-size: 0.9rem;
+    }
+    
+    .app-title {
+        font-size: 1.2rem;
+    }
+    
+    .stat-card {
+        padding: 15px 10px;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        padding: 15px;
     }
 }
