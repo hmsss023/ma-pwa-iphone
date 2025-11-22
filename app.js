@@ -32,9 +32,38 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCategories();
     updateGlobalScore();
     
-    // Enregistrement du Service Worker
+    // Enregistrement du Service Worker avec détection de mise à jour
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js');
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(registration => {
+                console.log('Service Worker enregistré');
+                
+                // Vérifier les mises à jour toutes les 30 minutes
+                setInterval(() => {
+                    registration.update();
+                }, 30 * 60 * 1000);
+                
+                // Détecter quand une nouvelle version est prête
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // Nouvelle version disponible !
+                            console.log('Nouvelle version disponible');
+                            
+                            // Proposer de recharger (optionnel)
+                            if (confirm('🎉 Une nouvelle version de Life Tracker est disponible !\n\nRecharger maintenant pour profiter des améliorations ?')) {
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                window.location.reload();
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Erreur Service Worker:', error);
+            });
     }
 });
 
