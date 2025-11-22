@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ma PWA Test">
+    <title>Ma PWA Test iPhone</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Ma PWA de Test</h1>
+            <p class="subtitle">Application Progressive Web</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>✅ Statut de l'application</h2>
+                <div id="status" class="status-info">
+                    <p>📱 <strong>Mode:</strong> <span id="display-mode">Navigateur</span></p>
+                    <p>🌐 <strong>Connexion:</strong> <span id="connection-status">En ligne</span></p>
+                    <p>💾 <strong>Service Worker:</strong> <span id="sw-status">Chargement...</span></p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>🎮 Fonctionnalités de test</h2>
+                
+                <div class="test-group">
+                    <h3>Compteur</h3>
+                    <div class="counter-container">
+                        <button id="decrease" class="btn btn-secondary">-</button>
+                        <span id="counter" class="counter-display">0</span>
+                        <button id="increase" class="btn btn-primary">+</button>
+                    </div>
+                    <button id="reset" class="btn btn-outline">Réinitialiser</button>
+                </div>
+
+                <div class="test-group">
+                    <h3>Notes</h3>
+                    <textarea id="notes" placeholder="Écrivez vos notes ici... Elles seront sauvegardées localement."></textarea>
+                    <p class="info-text">💡 Vos notes sont sauvegardées automatiquement</p>
+                </div>
+
+                <div class="test-group">
+                    <h3>Vibration (si disponible)</h3>
+                    <button id="vibrate" class="btn btn-primary">Faire vibrer</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>📊 Informations système</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Navigateur:</strong>
+                        <span id="browser-info">Détection...</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Résolution:</strong>
+                        <span id="screen-size">Calcul...</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Heure:</strong>
+                        <span id="current-time">--:--</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card success">
+                <h2>✨ Installation réussie !</h2>
+                <p>Si vous voyez cette page depuis votre écran d'accueil, félicitations ! Votre PWA fonctionne correctement.</p>
+                <p><strong>Pour installer:</strong></p>
+                <ol>
+                    <li>Ouvrez cette page dans Safari</li>
+                    <li>Appuyez sur <strong>Partager</strong> (icône carré avec flèche)</li>
+                    <li>Sélectionnez <strong>"Sur l'écran d'accueil"</strong></li>
+                    <li>Appuyez sur <strong>Ajouter</strong></li>
+                </ol>
+            </section>
+        </main>
+
+        <footer>
+            <p>Version 1.0.0 - PWA Test</p>
+            <p class="small">Créé avec ❤️ pour iPhone</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
