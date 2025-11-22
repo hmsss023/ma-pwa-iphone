@@ -5,11 +5,6 @@ const urlsToCache = [
   './style.css',
   './app.js',
   './manifest.json',
-  './icons/icon-120.png',
-  './icons/icon-152.png',
-  './icons/icon-167.png',
-  './icons/icon-180.png',
-  './icons/icon-192.png',
   './icons/icon-512.png'
 ];
 
